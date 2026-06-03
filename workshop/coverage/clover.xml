@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1780505910828" clover="3.2.0">
+  <project timestamp="1780505910828" name="All files">
+    <metrics statements="39" coveredstatements="38" conditionals="23" coveredconditionals="23" methods="7" coveredmethods="6" elements="69" coveredelements="67" complexity="0" loc="39" ncloc="39" packages="1" files="1" classes="1"/>
+    <file name="wallet.js" path="D:\CoE Y.4 T.1\PUPA\agentic-ai-workflow-101\workshop\src\wallet.js">
+      <metrics statements="39" coveredstatements="38" conditionals="23" coveredconditionals="23" methods="7" coveredmethods="6"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="5" count="28" type="cond" truecount="5" falsecount="0"/>
+      <line num="6" count="4" type="stmt"/>
+      <line num="8" count="24" type="stmt"/>
+      <line num="9" count="24" type="stmt"/>
+      <line num="10" count="24" type="stmt"/>
+      <line num="11" count="24" type="stmt"/>
+      <line num="12" count="24" type="stmt"/>
+      <line num="16" count="22" type="cond" truecount="4" falsecount="0"/>
+      <line num="17" count="2" type="stmt"/>
+      <line num="19" count="20" type="cond" truecount="2" falsecount="0"/>
+      <line num="20" count="2" type="stmt"/>
+      <line num="22" count="18" type="stmt"/>
+      <line num="23" count="18" type="stmt"/>
+      <line num="29" count="18" type="stmt"/>
+      <line num="33" count="10" type="cond" truecount="4" falsecount="0"/>
+      <line num="34" count="1" type="stmt"/>
+      <line num="36" count="9" type="cond" truecount="2" falsecount="0"/>
+      <line num="37" count="2" type="stmt"/>
+      <line num="39" count="7" type="cond" truecount="2" falsecount="0"/>
+      <line num="40" count="2" type="stmt"/>
+      <line num="42" count="5" type="stmt"/>
+      <line num="43" count="5" type="stmt"/>
+      <line num="49" count="5" type="stmt"/>
+      <line num="53" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="54" count="2" type="stmt"/>
+      <line num="56" count="4" type="cond" truecount="2" falsecount="0"/>
+      <line num="57" count="1" type="stmt"/>
+      <line num="59" count="3" type="stmt"/>
+      <line num="60" count="2" type="stmt"/>
+      <line num="61" count="2" type="stmt"/>
+      <line num="62" count="2" type="stmt"/>
+      <line num="63" count="2" type="stmt"/>
+      <line num="64" count="2" type="stmt"/>
+      <line num="65" count="2" type="stmt"/>
+      <line num="69" count="2" type="stmt"/>
+      <line num="73" count="6" type="stmt"/>
+      <line num="77" count="0" type="stmt"/>
+      <line num="87" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>

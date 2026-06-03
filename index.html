@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic AI Workflow — สื่อการสอน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0e14;
+    --bg-soft:#11151f;
+    --panel:#151a26;
+    --panel-2:#1b2230;
+    --line:#26304326;
+    --border:#2a3346;
+    --ink:#e6eaf2;
+    --ink-soft:#aeb8cc;
+    --ink-dim:#6f7a91;
+    --accent:#7c9cff;
+    --accent-2:#43e0c0;
+    --accent-3:#ffb86b;
+    --accent-4:#ff7eb6;
+    --danger:#ff6b6b;
+    --radius:16px;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'IBM Plex Sans Thai',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #1a2440 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, #16241f 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  ::selection{background:var(--accent);color:#0b0e14}
+
+  /* ---------- Layout ---------- */
+  .shell{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+  nav.side{
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+    background:linear-gradient(180deg,#0d111a,#0b0e14);
+    border-right:1px solid var(--border);
+    padding:28px 20px;
+  }
+  nav.side::-webkit-scrollbar{width:6px}
+  nav.side::-webkit-scrollbar-thumb{background:#2a3346;border-radius:3px}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+  .brand .logo{
+    width:42px;height:42px;border-radius:12px;flex:none;
+    background:conic-gradient(from 140deg,var(--accent),var(--accent-2),var(--accent-3),var(--accent-4),var(--accent));
+    display:grid;place-items:center;font-weight:700;color:#0b0e14;font-size:20px;
+    box-shadow:0 6px 24px -8px var(--accent);
+  }
+  .brand h1{font-size:15px;font-weight:600;letter-spacing:.2px;line-height:1.25}
+  .brand span{font-size:11px;color:var(--ink-dim);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+
+  .nav-group{margin:22px 0 8px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-dim);font-family:var(--mono)}
+  nav.side a.link{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 12px;border-radius:10px;color:var(--ink-soft);
+    font-size:14px;text-decoration:none;transition:.18s;border:1px solid transparent;
+  }
+  nav.side a.link:hover{background:var(--panel);color:var(--ink)}
+  nav.side a.link.active{background:linear-gradient(90deg,#1c2740,#151a26);color:#fff;border-color:var(--border)}
+  nav.side a.link .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none;opacity:.55}
+  nav.side a.link.active .dot{opacity:1;box-shadow:0 0 10px var(--accent)}
+
+  main{padding:0 0 120px;min-width:0}
+  .wrap{max-width:880px;margin:0 auto;padding:0 40px}
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    padding:90px 0 70px;position:relative;overflow:hidden;
+    border-bottom:1px solid var(--border);
+  }
+  .hero .wrap{position:relative;z-index:2}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;
+    color:var(--accent-2);border:1px solid var(--border);background:var(--panel);
+    padding:6px 14px;border-radius:999px;margin-bottom:24px;
+  }
+  .eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 0 0 var(--accent-2);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 #43e0c066}70%{box-shadow:0 0 0 10px #43e0c000}100%{box-shadow:0 0 0 0 #43e0c000}}
+  header.hero h2{
+    font-size:clamp(34px,5vw,56px);line-height:1.1;font-weight:700;letter-spacing:-.5px;margin-bottom:20px;
+  }
+  header.hero h2 .grad{
+    background:linear-gradient(120deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  header.hero p.lead{font-size:18px;color:var(--ink-soft);max-width:640px}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+  .chip{
+    display:flex;align-items:center;gap:8px;background:var(--panel);
+    border:1px solid var(--border);padding:8px 14px;border-radius:10px;font-size:13px;color:var(--ink-soft)
+  }
+  .chip b{color:var(--ink)}
+  .hero-glow{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
+    background:radial-gradient(500px 300px at 85% 30%,#7c9cff22,transparent)}
+
+  /* ---------- Sections ---------- */
+  section.block{padding:64px 0;border-bottom:1px solid var(--line)}
+  section.block:target{scroll-margin-top:0}
+  .kicker{font-family:var(--mono);font-size:13px;color:var(--accent-3);letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+  .kicker .num{
+    width:30px;height:30px;border-radius:9px;background:var(--panel-2);border:1px solid var(--border);
+    display:grid;place-items:center;color:var(--accent);font-weight:700;font-size:13px}
+  section.block h3{font-size:30px;font-weight:700;letter-spacing:-.3px;margin-bottom:16px}
+  section.block h4{font-size:19px;font-weight:600;margin:30px 0 12px;color:#fff}
+  section.block p{color:var(--ink-soft);margin-bottom:14px}
+  section.block p strong, li strong{color:var(--ink);font-weight:600}
+  .lead-p{font-size:17px;color:var(--ink)!important}
+
+  ul.feat, ul.plain{list-style:none;margin:14px 0}
+  ul.feat li{position:relative;padding:7px 0 7px 30px;color:var(--ink-soft)}
+  ul.feat li::before{content:"";position:absolute;left:4px;top:15px;width:8px;height:8px;border-radius:3px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+  ul.plain li{padding:5px 0 5px 22px;position:relative;color:var(--ink-soft)}
+  ul.plain li::before{content:"›";position:absolute;left:4px;color:var(--accent);font-weight:700}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--bg-soft));
+    border:1px solid var(--border);border-radius:var(--radius);padding:24px 26px;margin:22px 0;
+  }
+  .card.accent{border-left:3px solid var(--accent)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .mini{
+    background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;transition:.2s;
+  }
+  .mini:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .mini .ic{font-size:24px;margin-bottom:10px}
+  .mini h5{font-size:16px;margin-bottom:6px;color:#fff}
+  .mini p{font-size:13.5px;margin:0}
+
+  /* callouts */
+  .callout{border-radius:14px;padding:16px 20px;margin:20px 0;border:1px solid var(--border);display:flex;gap:14px}
+  .callout .ic{font-size:20px;flex:none}
+  .callout.tip{background:#0f1f1b;border-color:#1f5247}
+  .callout.warn{background:#231613;border-color:#5a3320}
+  .callout.note{background:#141a2b;border-color:#2a3a63}
+  .callout b{display:block;margin-bottom:3px;color:#fff}
+  .callout p{margin:0;font-size:14px}
+
+  /* ---------- Code ---------- */
+  .code{
+    background:#0a0d14;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:20px 0;
+  }
+  .code .bar{display:flex;align-items:center;gap:8px;padding:11px 16px;background:#0d1119;border-bottom:1px solid var(--border)}
+  .code .bar .d{width:11px;height:11px;border-radius:50%}
+  .code .bar .d.r{background:#ff5f56}.code .bar .d.y{background:#ffbd2e}.code .bar .d.g{background:#27c93f}
+  .code .bar .fname{margin-left:8px;font-family:var(--mono);font-size:12px;color:var(--ink-dim)}
+  .code pre{padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;color:#cdd6f4}
+  .code pre::-webkit-scrollbar{height:8px}
+  .code pre::-webkit-scrollbar-thumb{background:#2a3346;border-radius:4px}
+  .c-key{color:#ff7eb6}.c-str{color:#43e0c0}.c-com{color:#5a6680;font-style:italic}.c-fn{color:#7c9cff}.c-num{color:#ffb86b}.c-tag{color:#ffb86b}
+  code.inl{font-family:var(--mono);font-size:.86em;background:#1b2230;border:1px solid var(--border);
+    padding:2px 7px;border-radius:6px;color:var(--accent-2)}
+
+  /* ---------- Diagram ---------- */
+  .flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:24px 0}
+  .flow .node{
+    flex:1;min-width:120px;background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:16px 14px;text-align:center;position:relative
+  }
+  .flow .node .t{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+  .flow .node .s{font-size:11.5px;color:var(--ink-dim)}
+  .flow .arr{display:grid;place-items:center;padding:0 6px;color:var(--accent);font-size:22px;font-weight:700}
+  .loop-note{text-align:center;font-family:var(--mono);font-size:12px;color:var(--accent-2);margin-top:6px}
+
+  /* table */
+  table.cmp{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;overflow:hidden;border-radius:12px}
+  table.cmp th,table.cmp td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--border)}
+  table.cmp th{background:var(--panel-2);color:#fff;font-weight:600;font-size:13px}
+  table.cmp td{color:var(--ink-soft);background:var(--panel)}
+  table.cmp tr:last-child td{border-bottom:none}
+  table.cmp td:first-child{color:var(--ink);font-weight:500}
+
+  /* file tree */
+  .tree{font-family:var(--mono);font-size:13px;line-height:2;color:var(--ink-soft);white-space:pre}
+  .tree .f{color:var(--accent-2)}.tree .d{color:var(--accent-3)}.tree .cm{color:var(--ink-dim)}
+
+  /* footer */
+  footer{padding:50px 0;text-align:center;color:var(--ink-dim);font-size:13px}
+  footer .wrap{border-top:1px solid var(--border);padding-top:40px}
+
+  /* progress bar */
+  #prog{position:fixed;top:0;left:280px;right:0;height:3px;background:transparent;z-index:50}
+  #prog .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+
+  /* mobile */
+  .menu-btn{display:none}
+  @media(max-width:880px){
+    .shell{grid-template-columns:1fr}
+    nav.side{position:fixed;z-index:100;width:280px;transform:translateX(-100%);transition:.25s}
+    nav.side.open{transform:translateX(0)}
+    #prog{left:0}
+    .wrap{padding:0 22px}
+    .grid2,.grid3{grid-template-columns:1fr}
+    .menu-btn{display:grid;position:fixed;top:16px;right:16px;z-index:101;width:46px;height:46px;
+      place-items:center;background:var(--panel);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:20px;cursor:pointer}
+  }
+</style>
+</head>
+<body>
+<div id="prog"><div class="bar"></div></div>
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <nav class="side" id="side">
+    <div class="brand">
+      <div class="logo">◆</div>
+      <div>
+        <h1>Agentic AI Workflow</h1>
+        <span>สื่อการสอน 101</span>
+      </div>
+    </div>
+
+    <div class="nav-group">พื้นฐาน</div>
+    <a class="link active" href="#intro"><span class="dot"></span>บทนำ &amp; ภาพรวม</a>
+    <a class="link" href="#workflow"><span class="dot"></span>Agentic AI Workflow</a>
+    <a class="link" href="#harness"><span class="dot"></span>Agent Harness</a>
+
+    <div class="nav-group">ไฟล์กำหนดพฤติกรรม</div>
+    <a class="link" href="#agentmd"><span class="dot"></span>AGENT.md / CLAUDE.md</a>
+    <a class="link" href="#skillmd"><span class="dot"></span>SKILL.md</a>
+    <a class="link" href="#designsystem"><span class="dot"></span>Design System</a>
+    <a class="link" href="#designmd"><span class="dot"></span>DESIGN.md</a>
+
+    <div class="nav-group">นำไปใช้</div>
+    <a class="link" href="#structure"><span class="dot"></span>โครงสร้างโปรเจกต์</a>
+    <a class="link" href="#practice"><span class="dot"></span>Best Practices</a>
+    <a class="link" href="#summary"><span class="dot"></span>สรุป</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <header class="hero">
+      <div class="hero-glow"></div>
+      <div class="wrap">
+        <div class="eyebrow"><span class="pulse"></span>Educational Material · ฉบับเริ่มต้น</div>
+        <h2>เข้าใจ <span class="grad">Agentic AI Workflow</span><br>ตั้งแต่แนวคิดจนถึงการนำไปใช้จริง</h2>
+        <p class="lead">เรียนรู้ว่า AI Agent ทำงานอย่างไร — ตั้งแต่ลูปการคิด-ลงมือ (workflow), สภาพแวดล้อมที่รันมัน (harness), ไปจนถึงไฟล์ที่กำหนดพฤติกรรมอย่าง <code class="inl">AGENT.md</code>, <code class="inl">SKILL.md</code> และ <code class="inl">DESIGN.md</code></p>
+        <div class="hero-meta">
+          <div class="chip">📚 <b>10</b> หัวข้อหลัก</div>
+          <div class="chip">⏱️ อ่าน ~<b>25</b> นาที</div>
+          <div class="chip">🎯 ระดับ <b>เริ่มต้น–กลาง</b></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 0. INTRO -->
+    <section class="block" id="intro">
+      <div class="wrap">
+        <div class="kicker"><span class="num">00</span>BIG PICTURE</div>
+        <h3>AI Agent คืออะไร และทำไมต้องเรียน?</h3>
+        <p class="lead-p">“Agent” คือระบบ AI ที่ไม่ได้แค่ <em>ตอบคำถามทีละครั้ง</em> แต่สามารถ <strong>วางแผน ลงมือทำ และตรวจสอบผลลัพธ์ด้วยตัวเอง</strong> เป็นวงรอบ จนกว่างานจะเสร็จ โดยใช้ “เครื่องมือ” (tools) เพื่อโต้ตอบกับโลกจริง เช่น อ่าน/เขียนไฟล์ รันคำสั่ง หรือค้นเว็บ</p>
+
+        <div class="grid3">
+          <div class="mini">
+            <div class="ic">💬</div>
+            <h5>Chatbot ธรรมดา</h5>
+            <p>รับข้อความ → ตอบกลับ จบในรอบเดียว ไม่ลงมือทำอะไรเอง</p>
+          </div>
+          <div class="mini">
+            <div class="ic">🔧</div>
+            <h5>LLM + Tools</h5>
+            <p>เรียกใช้เครื่องมือได้ แต่ยังควบคุมโดยลำดับขั้นที่ตายตัว</p>
+          </div>
+          <div class="mini">
+            <div class="ic">🤖</div>
+            <h5>AI Agent</h5>
+            <p>ตัดสินใจเองว่าจะใช้เครื่องมืออะไร เมื่อไหร่ และวนซ้ำจนเสร็จ</p>
+          </div>
+        </div>
+
+        <div class="callout note">
+          <div class="ic">🧭</div>
+          <div>
+            <b>แผนที่ของเอกสารนี้</b>
+            <p>เราจะไล่จาก <strong>แนวคิด</strong> (Workflow) → <strong>สภาพแวดล้อม</strong> (Harness) → <strong>ไฟล์ควบคุมพฤติกรรม</strong> (AGENT.md, SKILL.md, DESIGN.md) → <strong>การลงมือทำจริง</strong></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. WORKFLOW -->
+    <section class="block" id="workflow">
+      <div class="wrap">
+        <div class="kicker"><span class="num">01</span>CORE CONCEPT</div>
+        <h3>Agentic AI Workflow</h3>
+        <p class="lead-p">หัวใจของ agent คือ <strong>วงลูป (agent loop)</strong> ที่ทำซ้ำไปเรื่อย ๆ จนกว่าจะบรรลุเป้าหมาย ต่างจาก workflow แบบเดิมที่กำหนดทุกขั้นตอนไว้ล่วงหน้า</p>
+
+        <h4>วงจรการทำงาน 4 ขั้น</h4>
+        <div class="flow">
+          <div class="node"><div class="t">① Perceive</div><div class="s">รับเป้าหมาย + บริบท</div></div>
+          <div class="arr">→</div>
+          <div class="node"><div class="t">② Plan</div><div class="s">คิดว่าจะทำอะไรต่อ</div></div>
+          <div class="arr">→</div>
+          <div class="node"><div class="t">③ Act</div><div class="s">เรียกใช้ tool</div></div>
+          <div class="arr">→</div>
+          <div class="node"><div class="t">④ Observe</div><div class="s">ดูผล แล้วประเมิน</div></div>
+        </div>
+        <div class="loop-note">↺ วนกลับไปขั้น ② จนกว่างานจะเสร็จ (Reasoning + Acting = ReAct loop)</div>
+
+        <h4>Workflow แบบกำหนดเอง vs แบบ Agentic</h4>
+        <table class="cmp">
+          <tr><th>มุมมอง</th><th>Predefined Workflow</th><th>Agentic Workflow</th></tr>
+          <tr><td>ลำดับขั้นตอน</td><td>กำหนดตายตัวล่วงหน้า</td><td>โมเดลตัดสินใจเองแบบ dynamic</td></tr>
+          <tr><td>ความยืดหยุ่น</td><td>ต่ำ — เจอเคสใหม่ต้องแก้โค้ด</td><td>สูง — ปรับตัวตามสถานการณ์</td></tr>
+          <tr><td>ความคาดเดาได้</td><td>สูง</td><td>ปานกลาง (ต้องมี guardrail)</td></tr>
+          <tr><td>เหมาะกับ</td><td>งานซ้ำ ๆ ที่รู้ขั้นตอนชัด</td><td>งานเปิดกว้าง ปลายทางไม่แน่นอน</td></tr>
+        </table>
+
+        <div class="card accent">
+          <h4 style="margin-top:0">รูปแบบ (Patterns) ที่พบบ่อย</h4>
+          <ul class="feat">
+            <li><strong>ReAct</strong> — สลับ “คิด (reason)” กับ “ลงมือ (act)” ทีละก้าว</li>
+            <li><strong>Planning</strong> — วางแผนทั้งหมดก่อน แล้วค่อยลงมือทีละขั้น</li>
+            <li><strong>Reflection</strong> — agent ตรวจงานตัวเองแล้วแก้ไขซ้ำ</li>
+            <li><strong>Multi-agent</strong> — แบ่งงานให้ agent ย่อยหลายตัวทำคู่ขนาน (เช่น orchestrator + sub-agents)</li>
+          </ul>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">💡</div>
+          <div>
+            <b>กุญแจสำคัญ</b>
+            <p>Agent ที่ดีไม่ได้วัดที่ “ฉลาดแค่ไหน” แต่วัดที่ <strong>ลูปหยุดถูกจังหวะ</strong> — รู้ว่าเมื่อไหร่งานเสร็จ เมื่อไหร่ควรถามมนุษย์ และเมื่อไหร่ต้องยอมแพ้</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. HARNESS -->
+    <section class="block" id="harness">
+      <div class="wrap">
+        <div class="kicker"><span class="num">02</span>RUNTIME</div>
+        <h3>Agent Harness</h3>
+        <p class="lead-p">ตัวโมเดล (LLM) เพียงอย่างเดียว <em>ทำอะไรไม่ได้</em> มันแค่พ่นข้อความออกมา — <strong>Harness</strong> คือโปรแกรมที่ห่อหุ้มโมเดลไว้ คอยรันลูป จัดการ context และเชื่อมต่อกับเครื่องมือจริง</p>
+
+        <h4>Harness ทำหน้าที่อะไรบ้าง</h4>
+        <div class="grid2">
+          <div class="mini"><div class="ic">🔁</div><h5>รัน Agent Loop</h5><p>ส่ง prompt → รับคำตอบ → ถ้าโมเดลขอใช้ tool ก็ไปเรียกให้ → ส่งผลกลับ → วนซ้ำ</p></div>
+          <div class="mini"><div class="ic">🛠️</div><h5>จัดการ Tools</h5><p>นิยามว่ามี tool อะไรบ้าง (อ่านไฟล์, รัน shell, ค้นเว็บ) และบังคับใช้สิทธิ์ (permission)</p></div>
+          <div class="mini"><div class="ic">🧠</div><h5>บริหาร Context</h5><p>ใส่ system prompt, ประวัติสนทนา, ไฟล์ที่เกี่ยว และ “บีบอัด” เมื่อ context ยาวเกิน</p></div>
+          <div class="mini"><div class="ic">🛡️</div><h5>Guardrails</h5><p>ขออนุญาตก่อนทำสิ่งที่อันตราย, จำกัดจำนวนรอบ, กรอง output</p></div>
+        </div>
+
+        <h4>กายวิภาคของหนึ่งรอบ (one turn)</h4>
+        <div class="code">
+          <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="fname">agent_loop.py — pseudo-code</span></div>
+<pre><span class="c-key">while</span> <span class="c-fn">not</span> task_done:
+    response = model.<span class="c-fn">generate</span>(
+        system   = system_prompt,   <span class="c-com"># รวมเนื้อหาจาก AGENT.md</span>
+        messages = conversation,
+        tools    = available_tools,
+    )
+
+    <span class="c-key">if</span> response.<span class="c-fn">wants_tool</span>():
+        result = harness.<span class="c-fn">run_tool</span>(response.tool_call)  <span class="c-com"># ← Harness ลงมือจริง</span>
+        conversation.<span class="c-fn">append</span>(result)
+    <span class="c-key">else</span>:
+        task_done = <span class="c-num">True</span>   <span class="c-com"># โมเดลบอกว่าเสร็จแล้ว</span></pre>
+        </div>
+
+        <div class="callout note">
+          <div class="ic">🔍</div>
+          <div>
+            <b>ตัวอย่าง Harness ในชีวิตจริง</b>
+            <p>Claude Code, Cursor, OpenAI Codex CLI, LangGraph — ทั้งหมดนี้คือ harness ที่ต่างกันที่ดีไซน์ของลูป, ชุด tools, และวิธีจัดการ context แต่หลักการเดียวกัน</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. AGENT.md -->
+    <section class="block" id="agentmd">
+      <div class="wrap">
+        <div class="kicker"><span class="num">03</span>CONFIGURATION</div>
+        <h3>AGENT.md / CLAUDE.md</h3>
+        <p class="lead-p">ไฟล์ <strong>คู่มือประจำโปรเจกต์</strong> ที่ harness จะอ่านเข้าไปใน context อัตโนมัติทุกครั้ง — เปรียบเหมือน “เอกสารต้อนรับพนักงานใหม่” ที่บอก agent ว่าโปรเจกต์นี้เป็นอย่างไร และควรทำงานแบบไหน</p>
+
+        <div class="callout tip">
+          <div class="ic">📌</div>
+          <div>
+            <b>ชื่อไฟล์ขึ้นกับเครื่องมือ</b>
+            <p><code class="inl">CLAUDE.md</code> (Claude Code) · <code class="inl">AGENTS.md</code> (มาตรฐานกลางที่หลายเครื่องมือรองรับ) · <code class="inl">.cursorrules</code> (Cursor) — แต่ <strong>แนวคิดเหมือนกัน</strong></p>
+          </div>
+        </div>
+
+        <h4>ควรใส่อะไร / ไม่ควรใส่อะไร</h4>
+        <table class="cmp">
+          <tr><th>✅ ควรใส่</th><th>❌ ไม่ควรใส่</th></tr>
+          <tr><td>คำสั่ง build / test / lint ที่ใช้บ่อย</td><td>สิ่งที่อ่านจากโค้ดได้อยู่แล้ว</td></tr>
+          <tr><td>แนวทาง code style ของทีม</td><td>เอกสารยาว ๆ ที่ไม่ได้ใช้ทุกครั้ง</td></tr>
+          <tr><td>โครงสร้างโปรเจกต์ &amp; ไฟล์สำคัญ</td><td>ความลับ / API key</td></tr>
+          <tr><td>ข้อห้าม (เช่น “อย่าแก้ไฟล์ generated”)</td><td>ประวัติ git (agent ดูเองได้)</td></tr>
+        </table>
+
+        <h4>ตัวอย่าง CLAUDE.md</h4>
+        <div class="code">
+          <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="fname">CLAUDE.md</span></div>
+<pre><span class="c-tag"># Project: ร้านค้าออนไลน์ (Next.js + Prisma)</span>
+
+<span class="c-tag">## คำสั่งที่ใช้บ่อย</span>
+- <span class="c-key">dev:</span>   <span class="c-str">`npm run dev`</span>
+- <span class="c-key">test:</span>  <span class="c-str">`npm test`</span> (ต้องผ่านก่อน commit เสมอ)
+- <span class="c-key">build:</span> <span class="c-str">`npm run build`</span>
+
+<span class="c-tag">## แนวทางการเขียนโค้ด</span>
+- ใช้ TypeScript แบบ strict, ห้ามใช้ <span class="c-str">`any`</span>
+- คอมโพเนนต์ใช้ functional + hooks เท่านั้น
+- ตั้งชื่อไฟล์แบบ kebab-case
+
+<span class="c-tag">## ข้อห้าม</span>
+- ห้ามแก้ไฟล์ใน <span class="c-str">`/generated`</span> (สร้างอัตโนมัติ)
+- ห้าม commit ลง branch <span class="c-str">`main`</span> โดยตรง</pre>
+        </div>
+
+        <div class="callout warn">
+          <div class="ic">⚠️</div>
+          <div>
+            <b>ยิ่งสั้น ยิ่งดี</b>
+            <p>ทุกบรรทัดใน AGENT.md กิน context window และโมเดลต้องอ่านทุกครั้ง — เขียนเฉพาะสิ่งที่ <strong>“ไม่ชัดเจนจากตัวโค้ดเอง”</strong> เท่านั้น</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SKILL.md -->
+    <section class="block" id="skillmd">
+      <div class="wrap">
+        <div class="kicker"><span class="num">04</span>CAPABILITY</div>
+        <h3>SKILL.md</h3>
+        <p class="lead-p">ถ้า AGENT.md คือ “ความรู้ที่ต้องรู้เสมอ” — <strong>Skill</strong> คือ “ความเชี่ยวชาญเฉพาะทางที่หยิบมาใช้เมื่อจำเป็น” มันคือชุดคำสั่ง + สคริปต์ + ทรัพยากร ที่ห่อรวมเป็นแพ็กเกจ และ <strong>โหลดเข้า context เฉพาะตอนที่เกี่ยวข้อง</strong></p>
+
+        <h4>หลักการ Progressive Disclosure</h4>
+        <p>Agent ไม่ได้อ่านทุก skill ตลอดเวลา — มันเห็นแค่ <strong>ชื่อ + คำอธิบาย</strong> ก่อน เมื่อ task ตรงกับ description ถึงจะโหลดเนื้อหาเต็มเข้ามา ช่วยประหยัด context มหาศาล</p>
+
+        <div class="flow">
+          <div class="node"><div class="t">เห็นแค่ metadata</div><div class="s">name + description</div></div>
+          <div class="arr">→</div>
+          <div class="node"><div class="t">task ตรงกับ skill</div><div class="s">โมเดลตัดสินใจเรียก</div></div>
+          <div class="arr">→</div>
+          <div class="node"><div class="t">โหลด SKILL.md เต็ม</div><div class="s">+ สคริปต์/ไฟล์แนบ</div></div>
+        </div>
+
+        <h4>โครงสร้างโฟลเดอร์ skill</h4>
+        <div class="card">
+          <div class="tree">
+<span class="d">pdf-processing/</span>
+├── <span class="f">SKILL.md</span>        <span class="cm"># คำอธิบาย + วิธีใช้ (อ่านก่อน)</span>
+├── <span class="d">scripts/</span>
+│   ├── <span class="f">extract.py</span>   <span class="cm"># โค้ดช่วยรัน</span>
+│   └── <span class="f">merge.py</span>
+└── <span class="d">references/</span>
+    └── <span class="f">api-guide.md</span> <span class="cm"># โหลดเฉพาะเมื่อต้องการ</span>
+          </div>
+        </div>
+
+        <h4>ตัวอย่าง SKILL.md (มี frontmatter)</h4>
+        <div class="code">
+          <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="fname">pdf-processing/SKILL.md</span></div>
+<pre><span class="c-com">---</span>
+<span class="c-key">name:</span> <span class="c-str">pdf-processing</span>
+<span class="c-key">description:</span> <span class="c-str">ใช้เมื่อต้องอ่าน รวม แยก หรือกรอกฟอร์ม
+  ไฟล์ PDF — trigger เมื่อผู้ใช้พูดถึง .pdf</span>
+<span class="c-com">---</span>
+
+<span class="c-tag"># การจัดการ PDF</span>
+
+<span class="c-tag">## รวมหลายไฟล์เป็นไฟล์เดียว</span>
+รันสคริปต์: <span class="c-str">`python scripts/merge.py a.pdf b.pdf -o out.pdf`</span>
+
+<span class="c-tag">## แยกหน้า</span>
+ดูรายละเอียด API ใน <span class="c-str">`references/api-guide.md`</span></pre>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">🎯</div>
+          <div>
+            <b>เคล็ดลับเขียน description</b>
+            <p><code class="inl">description</code> คือสิ่งเดียวที่โมเดลใช้ตัดสินใจว่าจะเรียก skill นี้ไหม — ต้องบอกชัดว่า <strong>“ใช้เมื่อไหร่”</strong> และใส่คำที่ผู้ใช้น่าจะพูด (trigger words)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. DESIGN SYSTEM -->
+    <section class="block" id="designsystem">
+      <div class="wrap">
+        <div class="kicker"><span class="num">05</span>FOUNDATION</div>
+        <h3>Design System คืออะไร?</h3>
+        <p class="lead-p"><strong>Design System</strong> คือ "ภาษากลาง" ของทีมพัฒนา — ชุดของ <strong>หลักการ, รูปแบบ, และองค์ประกอบที่ใช้ซ้ำได้</strong> ซึ่งทุกคน (รวมถึง agent) ยึดเป็นมาตรฐานเดียวกัน เพื่อให้ผลลัพธ์ออกมาสอดคล้องกันทั้งระบบ</p>
+
+        <div class="callout note">
+          <div class="ic">🧩</div>
+          <div>
+            <b>Design System กับ DESIGN.md สัมพันธ์กันอย่างไร?</b>
+            <p><strong>Design System</strong> = แนวคิดและหลักการออกแบบของทีม (อาจอยู่ใน Figma, Storybook ฯลฯ)<br>
+            <strong>DESIGN.md</strong> = ไฟล์ที่ <em>แปลง</em> Design System ให้อยู่ในรูปที่ agent อ่านได้ — design tokens เป็น YAML + rationale เป็น markdown<br>
+            กล่าวได้ว่า DESIGN.md คือ "สำเนาของ Design System สำหรับ AI"</p>
+          </div>
+        </div>
+
+        <h4>3 ระดับขององค์ประกอบ Design System</h4>
+        <div class="grid3">
+          <div class="mini">
+            <div class="ic">🎨</div>
+            <h5>Foundations</h5>
+            <p>สิ่งพื้นฐานสุด: สี, ตัวอักษร, spacing, ระบบ grid — กฎที่ทุกอย่างต้องอิง</p>
+          </div>
+          <div class="mini">
+            <div class="ic">🧱</div>
+            <h5>Components</h5>
+            <p>ชิ้นส่วนที่ประกอบซ้ำได้: Button, Card, Modal, Form — แต่ละตัวมี spec ชัดเจน</p>
+          </div>
+          <div class="mini">
+            <div class="ic">📐</div>
+            <h5>Patterns</h5>
+            <p>วิธีประกอบ components เข้าด้วยกัน: form validation pattern, navigation pattern</p>
+          </div>
+        </div>
+
+        <h4>Design System ในโลก Agentic AI</h4>
+        <p>เมื่อ agent ถูกขอให้ "สร้าง UI" หรือ "เพิ่มฟีเจอร์" โดยไม่มี Design System — มันต้องตัดสินใจเรื่องสีเอง, ขนาดเอง, รูปแบบเอง ซึ่งผลลัพธ์มักไม่สอดคล้องกับส่วนอื่นของระบบ Design System จึงเป็น <strong>constraint ที่ดี</strong> ที่ลดการตัดสินใจของ agent และรับประกัน consistency</p>
+
+        <div class="card accent">
+          <h4 style="margin-top:0">สิ่งที่ควรนิยามใน Design System สำหรับ Agent</h4>
+          <table class="cmp" style="margin:10px 0 0">
+            <tr><th>หมวด</th><th>ตัวอย่างที่ควรระบุ</th></tr>
+            <tr><td>Visual Token</td><td>ชื่อสี (เช่น <code class="inl">--color-primary</code>), ขนาด font, spacing scale</td></tr>
+            <tr><td>Component Contract</td><td>props ที่รับได้, state ต่าง ๆ (default/hover/disabled), variant</td></tr>
+            <tr><td>Naming Convention</td><td>รูปแบบชื่อไฟล์, คลาส, ตัวแปร ที่ใช้ทั้งโปรเจกต์</td></tr>
+            <tr><td>Do / Don't</td><td>ตัวอย่างสิ่งที่ทำได้และห้ามทำ (พร้อมเหตุผล)</td></tr>
+          </table>
+        </div>
+
+        <h4>ตัวอย่างการอ้างอิง Design System ใน AGENT.md</h4>
+        <div class="code">
+          <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="fname">CLAUDE.md — ส่วนที่อ้างถึง Design System</span></div>
+<pre><span class="c-tag">## Design System</span>
+- ใช้ Tailwind CSS — ดู token ที่ <span class="c-str">`tailwind.config.ts`</span>
+- สีหลัก: <span class="c-str">`brand-600`</span>, สีรอง: <span class="c-str">`neutral-500`</span>
+- Component library: shadcn/ui — ดูของที่มีอยู่ใน <span class="c-str">`src/components/ui/`</span>
+  ก่อน สร้างใหม่ก็ต่อเมื่อไม่มี component ที่ตรงความต้องการ
+- Spacing: ใช้ scale จาก Tailwind เท่านั้น (ห้ามใช้ px ตรง ๆ)</pre>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">💡</div>
+          <div>
+            <b>Design System ที่รู้จักกันดี</b>
+            <p><strong>Material Design</strong> (Google) · <strong>Ant Design</strong> · <strong>shadcn/ui</strong> · <strong>Radix UI</strong> — ถ้าโปรเจกต์ใช้ระบบเหล่านี้อยู่แล้ว ให้ระบุใน AGENT.md ว่าใช้อะไร agent จะปฏิบัติตามแนวทางของระบบนั้นได้ทันที</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DESIGN.md -->
+    <section class="block" id="designmd">
+      <div class="wrap">
+        <div class="kicker"><span class="num">06</span>VISUAL CONTRACT</div>
+        <h3>DESIGN.md</h3>
+        <p class="lead-p"><strong>DESIGN.md</strong> คือเอกสาร design system ที่ agent อ่านเพื่อสร้าง UI ให้สอดคล้องกันทั้งโปรเจกต์ — ไม่ใช่แผนฟีเจอร์ แต่คือ <strong>"ภาษาสายตา"</strong> ที่แปลง Design System ให้เป็นรูปแบบที่ AI เข้าใจได้ ทุกหน้าจอที่ agent สร้างจะยึดสี ตัวอักษร และ pattern ชุดเดียวกัน</p>
+
+        <div class="callout tip">
+          <div class="ic">💡</div>
+          <div>
+            <b>DESIGN.md เป็น "living artifact"</b>
+            <p>ไม่ใช่ไฟล์ config ที่ตายตัว — มันเติบโตไปพร้อมกับ design ของคุณ agent สร้างมันให้ คุณปรับแต่ง แล้วมันก็ถูกนำไปใช้กับหน้าจอต่อ ๆ ไปโดยอัตโนมัติ</p>
+          </div>
+        </div>
+
+        <h4>โครงสร้าง 2 ชั้น</h4>
+        <p>ทุก DESIGN.md มีสองชั้นที่ทำงานร่วมกัน:</p>
+        <div class="grid2">
+          <div class="mini">
+            <div class="ic">⚙️</div>
+            <h5>YAML Front Matter</h5>
+            <p>Design tokens ที่ machine-readable — ค่าสีเป็น hex, คุณสมบัติ font, spacing scale แน่นอน agent ใช้ค่าเหล่านี้เป็นตัวเลขจริง</p>
+          </div>
+          <div class="mini">
+            <div class="ic">📝</div>
+            <h5>Markdown Body</h5>
+            <p>Design rationale ที่ human-readable — อธิบาย <em>ว่าทำไม</em> ค่าเหล่านั้นถึงถูกเลือก ช่วยให้ agent เข้าใจเจตนาและตัดสินใจส่วนที่ token ครอบคลุมไม่ถึง</p>
+          </div>
+        </div>
+
+        <h4>ตัวอย่าง DESIGN.md (dark-themed productivity app)</h4>
+        <div class="code">
+          <div class="bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="fname">DESIGN.md</span></div>
+<pre><span class="c-com">---</span>
+<span class="c-key">name:</span> <span class="c-str">DevFocus Dark</span>
+<span class="c-key">colors:</span>
+  <span class="c-key">primary:</span>    <span class="c-str">"#2665fd"</span>   <span class="c-com"># สีหลัก — ปุ่ม, link, accent</span>
+  <span class="c-key">secondary:</span>  <span class="c-str">"#475569"</span>   <span class="c-com"># สีรอง</span>
+  <span class="c-key">surface:</span>    <span class="c-str">"#0b1326"</span>   <span class="c-com"># พื้นหลัง card / panel</span>
+  <span class="c-key">on-surface:</span> <span class="c-str">"#dae2fd"</span>   <span class="c-com"># ข้อความบน surface</span>
+  <span class="c-key">error:</span>      <span class="c-str">"#ffb4ab"</span>
+<span class="c-key">typography:</span>
+  <span class="c-key">body-md:</span>
+    <span class="c-key">family:</span> <span class="c-str">"Inter"</span>
+    <span class="c-key">size:</span>   <span class="c-str">"16px"</span>
+    <span class="c-key">weight:</span> <span class="c-num">400</span>
+  <span class="c-key">heading-lg:</span>
+    <span class="c-key">family:</span> <span class="c-str">"Inter"</span>
+    <span class="c-key">size:</span>   <span class="c-str">"32px"</span>
+    <span class="c-key">weight:</span> <span class="c-num">700</span>
+<span class="c-key">spacing:</span>
+  <span class="c-key">base:</span> <span class="c-str">"4px"</span>   <span class="c-com"># หน่วยพื้นฐาน × 1, 2, 4, 8 ...</span>
+<span class="c-com">---</span>
+
+<span class="c-tag"># DevFocus Dark — Design Rationale</span>
+
+<span class="c-tag">## ปรัชญาภาพรวม</span>
+ธีมมืดเข้มออกแบบมาเพื่อลด eye strain ระหว่างทำงานนาน ๆ
+สีน้ำเงินเป็น primary เพื่อให้ดูน่าเชื่อถือและโฟกัสได้
+
+<span class="c-tag">## สี</span>
+หลีกเลี่ยงสีขาวบริสุทธิ์ (#fff) บน surface มืด — ใช้ on-surface
+แทนเพื่อลด contrast ratio ที่แรงเกินไป
+
+<span class="c-tag">## Typography</span>
+ใช้ Inter เพราะอ่านง่ายบนจอความละเอียดสูง
+ขนาด heading ต้องแตกต่างกันอย่างน้อย 1.5× เพื่อให้ hierarchy ชัด</pre>
+        </div>
+
+        <h4>3 วิธีสร้าง DESIGN.md</h4>
+        <div class="grid3">
+          <div class="mini">
+            <div class="ic">🤖</div>
+            <h5>ให้ Agent สร้าง</h5>
+            <p>บอก "vibe" ที่ต้องการ เช่น "มืด เรียบ มินิมัล" — agent แปลงความตั้งใจนั้นเป็น token และ guideline ให้ทันที</p>
+          </div>
+          <div class="mini">
+            <div class="ic">🎨</div>
+            <h5>นำมาจาก Branding</h5>
+            <p>ให้ URL หรือรูปภาพ brand ที่มีอยู่ — agent ดึง palette, typography, และ style pattern ออกมาสร้าง DESIGN.md อัตโนมัติ</p>
+          </div>
+          <div class="mini">
+            <div class="ic">✍️</div>
+            <h5>เขียนเอง</h5>
+            <p>ผู้ใช้ขั้นสูงเขียน DESIGN.md โดยตรง — ใช้แค่ markdown + YAML มาตรฐาน ไม่มี syntax พิเศษ</p>
+          </div>
+        </div>
+
+        <div class="callout note">
+          <div class="ic">🧱</div>
+          <div>
+            <b>Philosophy: foundation, not a prescription</b>
+            <p>DESIGN.md เป็น <strong>จุดเริ่มต้นร่วม</strong> ไม่ใช่กฎที่ตายตัว — section ที่ไม่รู้จักหรือ token ที่ขยายเพิ่มเองถูกยอมรับ ไม่ถูกปฏิเสธ ทีมสามารถขยาย format สำหรับความต้องการเฉพาะทางได้เสมอ</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. STRUCTURE -->
+    <section class="block" id="structure">
+      <div class="wrap">
+        <div class="kicker"><span class="num">07</span>PUTTING IT TOGETHER</div>
+        <h3>ทุกอย่างอยู่ตรงไหนในโปรเจกต์</h3>
+        <p class="lead-p">เมื่อรวมทุกชิ้นเข้าด้วยกัน โปรเจกต์ที่ “พร้อมให้ agent ทำงาน” มักมีหน้าตาประมาณนี้</p>
+
+        <div class="card">
+          <div class="tree">
+<span class="d">my-project/</span>
+├── <span class="f">CLAUDE.md</span>            <span class="cm"># คู่มือหลัก — อ่านทุกครั้ง</span>
+├── <span class="f">DESIGN.md</span>            <span class="cm"># เอกสารออกแบบฟีเจอร์ปัจจุบัน</span>
+├── <span class="d">.claude/</span>
+│   ├── <span class="d">skills/</span>          <span class="cm"># ทักษะเฉพาะทาง (โหลดเมื่อต้องใช้)</span>
+│   │   ├── <span class="d">pdf-processing/</span>
+│   │   │   └── <span class="f">SKILL.md</span>
+│   │   └── <span class="d">db-migration/</span>
+│   │       └── <span class="f">SKILL.md</span>
+│   └── <span class="f">settings.json</span>    <span class="cm"># permission, hooks, env</span>
+├── <span class="d">src/</span>                 <span class="cm"># โค้ดจริง</span>
+└── <span class="d">tests/</span>
+          </div>
+        </div>
+
+        <h4>ความสัมพันธ์ของแต่ละชิ้น</h4>
+        <table class="cmp">
+          <tr><th>ชิ้นส่วน</th><th>ขอบเขต</th><th>โหลดเมื่อไหร่</th><th>เปรียบเหมือน</th></tr>
+          <tr><td>Harness</td><td>รันลูปทั้งหมด</td><td>ตลอดเวลา</td><td>ตัวพนักงาน + ออฟฟิศ</td></tr>
+          <tr><td>AGENT.md</td><td>ทั้งโปรเจกต์</td><td>ทุกครั้ง (เสมอ)</td><td>คู่มือพนักงาน</td></tr>
+          <tr><td>SKILL.md</td><td>งานเฉพาะทาง</td><td>เมื่อ task ตรง</td><td>คอร์สอบรมเฉพาะเรื่อง</td></tr>
+          <tr><td>DESIGN.md</td><td>ฟีเจอร์เดียว</td><td>ระหว่างทำฟีเจอร์</td><td>พิมพ์เขียวงาน</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7. PRACTICE -->
+    <section class="block" id="practice">
+      <div class="wrap">
+        <div class="kicker"><span class="num">08</span>BEST PRACTICES</div>
+        <h3>หลักปฏิบัติที่ทำให้ Agent ทำงานดี</h3>
+
+        <div class="grid2">
+          <div class="card accent">
+            <h4 style="margin-top:0">✍️ การเขียนคำสั่ง</h4>
+            <ul class="plain">
+              <li>สั้น กระชับ ชัดเจน — เขียนเฉพาะที่ไม่ชัดจากโค้ด</li>
+              <li>ใส่ “ข้อห้าม” ให้ชัด ดีกว่าบอกแต่สิ่งที่ทำได้</li>
+              <li>ให้ตัวอย่างจริงดีกว่าอธิบายลอย ๆ</li>
+            </ul>
+          </div>
+          <div class="card accent">
+            <h4 style="margin-top:0">🧩 การจัดการ Context</h4>
+            <ul class="plain">
+              <li>แยกความรู้เป็น skill อย่าอัดทุกอย่างใน AGENT.md</li>
+              <li>ใช้ description ที่มี trigger words ชัดเจน</li>
+              <li>แตกงานใหญ่เป็น task ย่อยใน DESIGN.md</li>
+            </ul>
+          </div>
+          <div class="card accent">
+            <h4 style="margin-top:0">🛡️ ความปลอดภัย</h4>
+            <ul class="plain">
+              <li>ตั้ง permission ให้ขออนุญาตก่อนทำสิ่งอันตราย</li>
+              <li>ไม่เก็บ secret / key ไว้ในไฟล์ที่ agent อ่าน</li>
+              <li>ให้มนุษย์ review แผน (DESIGN) ก่อนลงมือ</li>
+            </ul>
+          </div>
+          <div class="card accent">
+            <h4 style="margin-top:0">🔁 การทำงานเป็นรอบ</h4>
+            <ul class="plain">
+              <li>ให้ agent รัน test เพื่อ “ตรวจงานตัวเอง”</li>
+              <li>ทำทีละ task เล็ก ๆ แล้ว commit บ่อย ๆ</li>
+              <li>กำหนดเงื่อนไขหยุดลูปให้ชัด</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="ic">🌟</div>
+          <div>
+            <b>กฎทอง</b>
+            <p>ปฏิบัติกับ agent เหมือน <strong>นักพัฒนาใหม่ที่เก่งแต่ยังไม่รู้จักโปรเจกต์</strong> — สิ่งที่คุณจะบอกเขาในวันแรก คือสิ่งที่ควรอยู่ใน AGENT.md / SKILL.md / DESIGN.md</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. SUMMARY -->
+    <section class="block" id="summary">
+      <div class="wrap">
+        <div class="kicker"><span class="num">09</span>RECAP</div>
+        <h3>สรุปทั้งหมดในหน้าเดียว</h3>
+
+        <div class="grid2">
+          <div class="mini"><div class="ic">🔁</div><h5>Agentic Workflow</h5><p>ลูป Plan → Act → Observe ที่โมเดลตัดสินใจเอง วนจนงานเสร็จ</p></div>
+          <div class="mini"><div class="ic">⚙️</div><h5>Harness</h5><p>โปรแกรมที่รันลูป จัดการ tools + context และบังคับ guardrails</p></div>
+          <div class="mini"><div class="ic">📋</div><h5>AGENT.md / CLAUDE.md</h5><p>คู่มือประจำโปรเจกต์ที่อ่านทุกครั้ง — สั้นและจำเป็น</p></div>
+          <div class="mini"><div class="ic">🧰</div><h5>SKILL.md</h5><p>ความเชี่ยวชาญเฉพาะทาง โหลดเมื่อ task ตรง (progressive disclosure)</p></div>
+          <div class="mini"><div class="ic">📐</div><h5>DESIGN.md</h5><p>เอกสาร design system สำหรับ agent — YAML tokens + markdown rationale ทำให้ UI สอดคล้องกันทั้งโปรเจกต์</p></div>
+          <div class="mini"><div class="ic">✅</div><h5>Best Practices</h5><p>สั้น-ชัด-ปลอดภัย ทำทีละขั้น และให้ agent ตรวจงานตัวเอง</p></div>
+        </div>
+
+        <div class="card" style="margin-top:30px;text-align:center;background:linear-gradient(135deg,#16203a,#11181f)">
+          <h4 style="margin-top:6px">พร้อมลงมือแล้ว? 🚀</h4>
+          <p style="margin-bottom:6px">ลองเริ่มจากสร้างไฟล์ <code class="inl">CLAUDE.md</code> ในโปรเจกต์ของคุณ เขียนคำสั่ง build/test ที่ใช้บ่อย แล้วค่อย ๆ เพิ่ม skill ทีละตัวเมื่อเจอ pattern งานซ้ำ ๆ</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <p>สื่อการสอน · <strong>Agentic AI Workflow 101</strong> · จัดทำเป็นเอกสาร HTML แบบ self-contained</p>
+        <p style="margin-top:8px;opacity:.7">เปิดไฟล์นี้ด้วยเบราว์เซอร์ใดก็ได้ — ไม่ต้องติดตั้งอะไรเพิ่ม</p>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // progress bar
+  const bar = document.querySelector('#prog .bar');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+  };
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  // active link via IntersectionObserver
+  const links = [...document.querySelectorAll('nav.side a.link')];
+  const map = {};
+  links.forEach(l => map[l.getAttribute('href').slice(1)] = l);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        links.forEach(l => l.classList.remove('active'));
+        const a = map[e.target.id];
+        if(a) a.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-45% 0px -50% 0px'});
+  document.querySelectorAll('section.block').forEach(s => obs.observe(s));
+
+  // mobile menu
+  const side = document.getElementById('side');
+  const btn = document.getElementById('menuBtn');
+  btn.addEventListener('click', () => side.classList.toggle('open'));
+  side.addEventListener('click', e => { if(e.target.classList.contains('link')) side.classList.remove('open'); });
+</script>
+</body>
+</html>
