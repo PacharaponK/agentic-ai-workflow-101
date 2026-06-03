@@ -12,6 +12,8 @@ const {
   withdraw,
   transfer,
   getTransactions,
+  queryWalletsByFilter,
+  adjustBalanceDirect,
   wallets,
 } = require('./walletController');
 
@@ -27,6 +29,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // ─── Routes: Wallet CRUD ──────────────────────────────────────────────────────
 app.get("/wallets", getAllWallets); // ดู wallet ทั้งหมด
 app.post("/wallets", createWallet); // สร้าง wallet ใหม่
+app.post("/wallets/query", queryWalletsByFilter); // ค้นหากระเป๋าเงินด้วย filter — ต้องอยู่ก่อน /:id
 app.get("/wallets/:id", getWallet); // ดู wallet ตาม id
 
 // ─── Routes: Wallet Operations ────────────────────────────────────────────────
@@ -34,6 +37,7 @@ app.post("/wallets/:id/deposit", deposit); // ฝากเงิน
 app.post("/wallets/:id/withdraw", withdraw); // ถอนเงิน
 app.post("/wallets/:id/transfer", transfer); // โอนเงิน
 app.get("/wallets/:id/transactions", getTransactions); // ประวัติธุรกรรม
+app.post("/wallets/:id/adjust-balance", adjustBalanceDirect); // ปรับยอดเงินโดยตรง
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 // ใช้สำหรับตรวจสอบว่า server ยังทำงานอยู่ (monitoring / load balancer)

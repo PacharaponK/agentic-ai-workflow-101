@@ -344,6 +344,119 @@ function getTransactions(req, res) {
   return res.json(wallet.getTransactions());
 }
 
+/**
+ * @swagger
+ * /wallets/query:
+ *   post:
+ *     summary: ค้นหา wallet ด้วย filter
+ *     tags: [Wallets]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ownerContains:
+ *                 type: string
+ *                 description: กรองตามชื่อเจ้าของ (case-insensitive)
+ *                 example: alice
+ *               minBalance:
+ *                 type: number
+ *                 description: ยอดเงินขั้นต่ำ
+ *                 example: 100
+ *               maxBalance:
+ *                 type: number
+ *                 description: ยอดเงินสูงสุด
+ *                 example: 5000
+ *     responses:
+ *       200:
+ *         description: รายการ wallet ที่ตรงกับ filter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Wallet'
+ *       400:
+ *         description: ไม่มี filter field ส่งมาเลย
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+function queryWalletsByFilter(req, res) {
+  const { ownerContains, minBalance, maxBalance } = req.body;
+  if (ownerContains === undefined && minBalance === undefined && maxBalance === undefined) {
+    return res.status(400).json({ error: 'At least one filter field is required: ownerContains, minBalance, maxBalance' });
+  }
+  const results = Array.from(wallets.values()).filter(w => {
+    if (ownerContains !== undefined && !w.owner.toLowerCase().includes(String(ownerContains).toLowerCase())) return false;
+    if (minBalance !== undefined && w.balance < minBalance) return false;
+    if (maxBalance !== undefined && w.balance > maxBalance) return false;
+    return true;
+  });
+  return res.json(results.map(w => w.toJSON()));
+}
+
+/**
+ * @swagger
+ * /wallets/{id}/adjust-balance:
+ *   post:
+ *     summary: เพิ่มยอดเงินใน wallet โดยตรง (admin operation)
+ *     tags: [Operations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: Wallet ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [amount]
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 description: จำนวนเงินที่ต้องการเพิ่ม (ต้องมากกว่า 0)
+ *                 example: 500
+ *     responses:
+ *       200:
+ *         description: ปรับยอดเงินสำเร็จ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 balance: { type: number, example: 1500 }
+ *       400:
+ *         description: จำนวนเงินไม่ถูกต้อง
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: ไม่พบ wallet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+function adjustBalanceDirect(req, res) {
+  const wallet = findWallet(req.params.id, res);
+  if (!wallet) return;
+  const { amount } = req.body;
+  try {
+    const balance = wallet.deposit(amount);
+    return res.json({ balance });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+}
+
 // ─── Exports ──────────────────────────────────────────────────────────────────
 // export wallets ด้วยเพื่อให้ test ไฟล์ reset state ระหว่าง test ได้
 module.exports = {
@@ -354,5 +467,7 @@ module.exports = {
   withdraw,
   transfer,
   getTransactions,
+  queryWalletsByFilter,
+  adjustBalanceDirect,
   wallets,
 };
