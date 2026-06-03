@@ -23,8 +23,41 @@ function findWallet(id, res) {
 
 // ─── Wallet CRUD ──────────────────────────────────────────────────────────────
 
-// POST /wallets — สร้าง wallet ใหม่
-// Body: { owner: string }
+/**
+ * @swagger
+ * /wallets:
+ *   post:
+ *     summary: สร้าง wallet ใหม่
+ *     tags: [Wallets]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [owner]
+ *             properties:
+ *               owner:
+ *                 type: string
+ *                 example: Alice
+ *     responses:
+ *       201:
+ *         description: สร้าง wallet สำเร็จ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string }
+ *                 wallet:
+ *                   $ref: '#/components/schemas/Wallet'
+ *       400:
+ *         description: ข้อมูลไม่ถูกต้อง
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 function createWallet(req, res) {
   try {
     const { owner } = req.body;
@@ -37,13 +70,53 @@ function createWallet(req, res) {
   }
 }
 
-// GET /wallets — ดู wallet ทั้งหมดในระบบ
+/**
+ * @swagger
+ * /wallets:
+ *   get:
+ *     summary: ดู wallet ทั้งหมดในระบบ
+ *     tags: [Wallets]
+ *     responses:
+ *       200:
+ *         description: รายการ wallet ทั้งหมด
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Wallet'
+ */
 function getAllWallets(req, res) {
   const list = Array.from(wallets.values()).map((w) => w.toJSON());
   return res.json(list);
 }
 
-// GET /wallets/:id — ดู wallet ตาม id
+/**
+ * @swagger
+ * /wallets/{id}:
+ *   get:
+ *     summary: ดู wallet ตาม id
+ *     tags: [Wallets]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: Wallet ID
+ *     responses:
+ *       200:
+ *         description: ข้อมูล wallet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Wallet'
+ *       404:
+ *         description: ไม่พบ wallet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 function getWallet(req, res) {
   const wallet = findWallet(req.params.id, res);
   if (!wallet) return;
@@ -52,8 +125,51 @@ function getWallet(req, res) {
 
 // ─── Wallet Operations ────────────────────────────────────────────────────────
 
-// POST /wallets/:id/deposit — ฝากเงิน
-// Body: { amount: number }
+/**
+ * @swagger
+ * /wallets/{id}/deposit:
+ *   post:
+ *     summary: ฝากเงินเข้า wallet
+ *     tags: [Operations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [amount]
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 1000
+ *     responses:
+ *       200:
+ *         description: ฝากเงินสำเร็จ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string }
+ *                 balance: { type: number, example: 6000 }
+ *       400:
+ *         description: จำนวนเงินไม่ถูกต้อง
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: ไม่พบ wallet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 function deposit(req, res) {
   const wallet = findWallet(req.params.id, res);
   if (!wallet) return;
@@ -67,8 +183,51 @@ function deposit(req, res) {
   }
 }
 
-// POST /wallets/:id/withdraw — ถอนเงิน
-// Body: { amount: number }
+/**
+ * @swagger
+ * /wallets/{id}/withdraw:
+ *   post:
+ *     summary: ถอนเงินจาก wallet
+ *     tags: [Operations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [amount]
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 500
+ *     responses:
+ *       200:
+ *         description: ถอนเงินสำเร็จ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message: { type: string }
+ *                 balance: { type: number, example: 4500 }
+ *       400:
+ *         description: จำนวนเงินไม่ถูกต้อง หรือยอดไม่เพียงพอ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: ไม่พบ wallet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 function withdraw(req, res) {
   const wallet = findWallet(req.params.id, res);
   if (!wallet) return;
@@ -82,8 +241,57 @@ function withdraw(req, res) {
   }
 }
 
-// POST /wallets/:id/transfer — โอนเงินไปยัง wallet อื่น
-// Body: { toWalletId: string, amount: number }
+/**
+ * @swagger
+ * /wallets/{id}/transfer:
+ *   post:
+ *     summary: โอนเงินไปยัง wallet อื่น
+ *     tags: [Operations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: Wallet ID ต้นทาง
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [toWalletId, amount]
+ *             properties:
+ *               toWalletId:
+ *                 type: string
+ *                 format: uuid
+ *                 description: Wallet ID ปลายทาง
+ *               amount:
+ *                 type: number
+ *                 example: 1000
+ *     responses:
+ *       200:
+ *         description: โอนเงินสำเร็จ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:     { type: string }
+ *                 fromBalance: { type: number, example: 4000 }
+ *                 toBalance:   { type: number, example: 3000 }
+ *       400:
+ *         description: จำนวนเงินไม่ถูกต้อง หรือยอดไม่เพียงพอ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: ไม่พบ wallet ต้นทางหรือปลายทาง
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 function transfer(req, res) {
   const fromWallet = findWallet(req.params.id, res);
   if (!fromWallet) return;
@@ -103,7 +311,33 @@ function transfer(req, res) {
   }
 }
 
-// GET /wallets/:id/transactions — ดูประวัติธุรกรรมทั้งหมด
+/**
+ * @swagger
+ * /wallets/{id}/transactions:
+ *   get:
+ *     summary: ดูประวัติธุรกรรมทั้งหมดของ wallet
+ *     tags: [Operations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: รายการธุรกรรม
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Transaction'
+ *       404:
+ *         description: ไม่พบ wallet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 function getTransactions(req, res) {
   const wallet = findWallet(req.params.id, res);
   if (!wallet) return;

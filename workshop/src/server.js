@@ -1,7 +1,9 @@
 // server.js — Entry point ของ Digital Wallet API
 // ลงทะเบียน middleware และ routes ทั้งหมด แล้ว export app สำหรับ testing
 
-const express = require("express");
+const express    = require('express');
+const swaggerUi  = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 const {
   createWallet,
   getAllWallets,
@@ -11,12 +13,16 @@ const {
   transfer,
   getTransactions,
   wallets,
-} = require("./walletController");
+} = require('./walletController');
 
 const app = express();
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(express.json()); // parse request body เป็น JSON อัตโนมัติ
+
+// ─── Swagger UI ───────────────────────────────────────────────────────────────
+// เข้าถึงได้ที่ http://localhost:3000/api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ─── Routes: Wallet CRUD ──────────────────────────────────────────────────────
 app.get("/wallets", getAllWallets); // ดู wallet ทั้งหมด
@@ -39,9 +45,9 @@ const PORT = process.env.PORT || 3000;
 // เริ่ม server เฉพาะเมื่อรันไฟล์นี้โดยตรง (node src/server.js)
 // ถ้า require() จาก test ไฟล์จะไม่ listen ซ้ำ
 if (require.main === module) {
-  // เติมข้อมูลตัวอย่างเมื่อรันใน development เพื่อทดสอบ API ได้ทันที
-  if (process.env.NODE_ENV === "development") {
-    const seed = require("./seed");
+  // seed ข้อมูลตัวอย่างทุกครั้ง ยกเว้น production
+  if (process.env.NODE_ENV !== 'production') {
+    const seed = require('./seed');
     seed(wallets);
   }
 
