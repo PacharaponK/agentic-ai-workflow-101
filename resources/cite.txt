@@ -1,0 +1,11 @@
+เรื่อง Agentic AI
+- https://www.ibm.com/think/topics/agentic-ai-vs-generative-ai (Agentic AI vs. generative AI)
+
+หัวข้อ AGENTS.md
+- https://agentskills.io/home (agents.md standard)
+- https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions (Copilot's Folder Structure)
+- https://antigravity.google/docs/gcli-migration (antigravity skills paths)
+- https://code.claude.com/docs/en/claude-directory (.claude folder structure)
+
+หัวข้อ SKILL.md
+- https://skillsmp.com/ (skill.md marketplace)
