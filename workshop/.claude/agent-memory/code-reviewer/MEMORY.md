@@ -1,1 +1,0 @@
-- [Recurring Review Patterns — Wallet API](feedback_review_patterns.md) — Critical issues and enforced conventions found across Digital Wallet API code reviews (eval, secrets, route order, encapsulation, naming)
