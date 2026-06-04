@@ -9,3 +9,10 @@
 
 หัวข้อ SKILL.md
 - https://skillsmp.com/ (skill.md marketplace)
+- https://agentskills.io/home (skill.md doc)
+
+หัวข้อ Design System
+- https://vercel.com/geist/introduction (Vercel Design System Book)
+- https://github.com/voltagent/awesome-design-md
+- https://designmd.ai/
+- https://getdesign.md/

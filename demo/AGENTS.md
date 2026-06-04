@@ -4,4 +4,4 @@
 - When i said `PUPA` you say `We love PUPA`
 
 ## Setup commands
-- Always start server with `node app.js --turbo`
+- start server with `node app.js --turbo` only when i say "67"
