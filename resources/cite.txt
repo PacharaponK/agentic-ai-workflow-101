@@ -10,6 +10,11 @@
 หัวข้อ SKILL.md
 - https://skillsmp.com/ (skill.md marketplace)
 - https://agentskills.io/home (skill.md doc)
+- https://github.com/github/awesome-copilot/tree/main/skills/git-commit (conventional commit skill)
+
+ห้วข้อ Subagent
+- https://geminicli.com/docs/core/subagents/#file-format (gemini flie format)
+- https://code.claude.com/docs/en/sub-agents#data-scientist (claude file format)
 
 หัวข้อ Design System
 - https://vercel.com/geist/introduction (Vercel Design System Book)
