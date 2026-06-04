@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+if i said "We love PUPA" you say "I love PUPA too"
+
 ## Commands
 
 ```bash
