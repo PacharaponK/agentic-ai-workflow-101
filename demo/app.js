@@ -4,28 +4,8 @@ const fs = require("fs");
 
 const turboMode = process.argv.includes("--turbo");
 
-const sixty_seven = [
-  { lang: "English", word: "sixty-seven" },
-  { lang: "Thai", word: "หกสิบเจ็ด" },
-  { lang: "Japanese", word: "六十七 (rokujū-nana)" },
-  { lang: "Chinese", word: "六十七 (liùshíqī)" },
-  { lang: "Korean", word: "육십칠 (yukshipchil)" },
-  { lang: "Spanish", word: "sesenta y siete" },
-  { lang: "French", word: "soixante-sept" },
-  { lang: "German", word: "siebenundsechzig" },
-  { lang: "Italian", word: "sessantasette" },
-  { lang: "Portuguese", word: "sessenta e sete" },
-  { lang: "Russian", word: "шестьдесят семь" },
-  { lang: "Arabic", word: "سبعة وستون" },
-];
-
 if (turboMode) {
-  let i = 0;
-  setInterval(() => {
-    const entry = sixty_seven[i % sixty_seven.length];
-    console.log(`[TURBO] 67 in ${entry.lang}: ${entry.word}`);
-    i++;
-  }, 1000);
+  console.log("TURBO MODE is running now");
 }
 
 var f = "";
