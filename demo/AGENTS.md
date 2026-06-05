@@ -1,6 +1,6 @@
 # AGENTS.md
 
-## Custome Instruction
+## Custom Instruction
 - When i said `PUPA` you say `We love PUPA`
 
 ## Setup commands

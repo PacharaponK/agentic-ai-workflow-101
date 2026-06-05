@@ -1,85 +1,63 @@
 # Agentic AI Workflow 101
 
-A hands-on workshop repository for learning how to build and work with agentic AI workflows using Claude Code. The repo includes a slide deck and a fully functional practice project.
+A hands-on workshop repository for learning how to build and work with agentic AI workflows using Claude Code. The repo includes a slide deck, a demo project, and reference resources.
 
 ## Contents
 
 | Path | Description |
 |---|---|
-| `index.html` | Workshop slide deck (Thai language) |
-| `workshop/` | Digital Wallet REST API — the practice project |
+| `resources/index.html` | Workshop slide deck (Thai language) |
+| `demo/` | Investment analysis multi-agent demo |
+| `resources/` | Skills, design references, and citations |
 
 ---
 
 ## Workshop Slide Deck
 
-Open `index.html` in any modern browser to view the workshop materials. No build step required.
+Open `resources/index.html` in any modern browser to view the workshop materials. No build step required.
 
 ---
 
-## Workshop Project — Digital Wallet API
+## Demo — Investment Analysis Multi-Agent System
 
-A simple in-memory Digital Wallet REST API built with **Express.js**, used as the hands-on subject for practising agentic AI workflows with Claude Code.
+The `demo/` directory contains a working example of a multi-agent orchestration system that produces an investment research report for any company or stock ticker.
 
-### Tech stack
+### Architecture
 
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Docs:** Swagger UI (`swagger-jsdoc` + `swagger-ui-express`)
-- **Testing:** Jest + Supertest
+The system uses one **Orchestrator** agent that decomposes the task and dispatches three **Subagents** in parallel:
 
-### Getting started
+| Agent | Role |
+|---|---|
+| `orchestrator` | Coordinates the workflow, waits for all subagents, and synthesises the final report |
+| `stock-analyst` | Equity price trends, market sentiment, and consensus recommendations |
+| `industry-analyst` | Sector dynamics, competitive landscape, and moat analysis |
+| `financial-analyst` | Financial statements, key ratios, and financial health scoring |
 
-```bash
-cd workshop
-npm install
+See [demo/SUBAGENTS.md](demo/SUBAGENTS.md) for full descriptions of each agent's responsibilities, and [demo/AGENTS.md](demo/AGENTS.md) for Claude Code custom instructions.
 
-# Start with seed data (development)
-npm run dev
+### Agent configuration
 
-# Production start
-npm start
-```
+Agent definitions live under `demo/.agents/agents/<name>/agent.json` using the standard `customAgentSpec` schema. Skills are defined under `demo/.agents/skills/`.
 
-The server runs on `http://localhost:3000`.
-Swagger UI is available at `http://localhost:3000/api-docs`.
+### Demo app
 
-### Project structure
-
-```
-workshop/
-├── src/
-│   ├── server.js           # Entry point — routes & middleware
-│   ├── walletController.js # Request handlers & HTTP responses
-│   ├── wallet.js           # Wallet class — business logic & state
-│   ├── swagger.js          # OpenAPI spec generation
-│   └── seed.js             # Dev seed data
-└── tests/
-    └── api.test.js         # Integration tests (Jest + Supertest)
-```
-
-### API endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/wallets` | Create a new wallet |
-| `GET` | `/wallets/:id` | Get wallet details |
-| `POST` | `/wallets/:id/deposit` | Deposit funds |
-| `POST` | `/wallets/:id/withdraw` | Withdraw funds |
-| `POST` | `/wallets/:id/transfer` | Transfer funds to another wallet |
-
-Full interactive docs available at `/api-docs` when the server is running.
-
-### Running tests
+`demo/app.js` is a minimal Node.js HTTP server used as a live target during the workshop.
 
 ```bash
-cd workshop
-npm test          # Run all tests with coverage
+node demo/app.js
+# Server running at http://localhost:3000/
 ```
 
-### Key design notes
+---
 
-- All state is **in-memory** — data resets on restart.
-- `wallet.js` is the single source of truth; methods throw on invalid input, controllers map thrown errors to HTTP 400.
-- Seed data runs automatically when `NODE_ENV !== 'production'`.
-- Every new route must have a corresponding `@swagger` JSDoc comment in `walletController.js`.
+## Resources
+
+| Path | Description |
+|---|---|
+| `resources/cite.txt` | Citation references for all workshop topics |
+| `resources/design/DESIGN.md` | Design system documentation |
+| `resources/skills/code-reviewer/` | Example code-review skill with security and maintainability rules |
+| `resources/skills/skill-creator/` | Skill packaging, validation, and evaluation scripts |
+| `resources/skills/impeccable/` | Impeccable frontend design skill |
+| `resources/skills/frontend-design/` | Frontend design skill |
+| `resources/stitch/` | UI mockup stitch files (screenshots + DESIGN.md) |

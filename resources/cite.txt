@@ -15,9 +15,13 @@
 ห้วข้อ Subagent
 - https://geminicli.com/docs/core/subagents/#file-format (gemini flie format)
 - https://code.claude.com/docs/en/sub-agents#data-scientist (claude file format)
+- https://github.com/VoltAgent/awesome-claude-code-subagents (subagents repository)
 
 หัวข้อ Design System
 - https://vercel.com/geist/introduction (Vercel Design System Book)
 - https://github.com/voltagent/awesome-design-md
 - https://designmd.ai/
 - https://getdesign.md/
+
+หัวข้อ MCP 
+- https://mcpmarket.com/leaderboards (MCP marketplace)
